@@ -30,6 +30,7 @@ assistant = [
     "python-multipart==0.0.32",
     "requests==2.34.2",
     "uvicorn==0.53.0",
+    "httpx==0.28.1",
 ]
 streamlit = [
     "requests==2.34.2",

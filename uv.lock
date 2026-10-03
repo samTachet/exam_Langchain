@@ -433,6 +433,7 @@ source = { virtual = "." }
 [package.dev-dependencies]
 assistant = [
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "langchain" },
     { name = "langchain-core" },
     { name = "langchain-groq" },
@@ -467,6 +468,7 @@ streamlit = [
 [package.metadata.requires-dev]
 assistant = [
     { name = "fastapi", specifier = "==0.141.1" },
+    { name = "httpx", specifier = "==0.28.1" },
     { name = "langchain", specifier = "==1.4.2" },
     { name = "langchain-core", specifier = "==1.6.4" },
     { name = "langchain-groq", specifier = "==1.1.3" },

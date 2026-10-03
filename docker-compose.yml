@@ -1,29 +1,51 @@
 services:
   auth:
-
+    build:
+      context: .
+      dockerfile: src/api/authentification/Dockerfile.auth
     ports:
       - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - app_network
 
   main:
-
+    build:
+      context: .
+      dockerfile: src/api/assistant/Dockerfile.main
     ports:
       - "8000:8000"
     depends_on:
-      - auth
+      auth:
+        condition: service_healthy
     networks:
       - app_network
     env_file:
       - .env
+    environment:
+      AUTH_URL: "http://auth:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   streamlit:
-
+    build:
+      context: .
+      dockerfile: src/Dockerfile.streamlit
     ports:
       - "8501:8501"
     depends_on:
       - auth
       - main
+    environment:
+      AUTH_URL: "http://auth:8001"
+      API_URL: "http://main:8000"
     networks:
       - app_network
 
@@ -32,8 +54,10 @@ services:
       context: .
       dockerfile: Dockerfile.test
     depends_on:
-      - auth
-      - main
+      auth:
+        condition: service_healthy
+      main:
+        condition: service_healthy
     environment:
       RUN_CONTAINER_TESTS: "true"
       AUTH_URL: "http://auth:8001"
